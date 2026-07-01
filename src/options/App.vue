@@ -751,32 +751,32 @@ export default {
     border-bottom: 1px solid rgba($color: #ffffff, $alpha: 0.38);
   }
 
-  /deep/ .el-switch__label.is-active {
+  ::v-deep .el-switch__label.is-active {
     color: rgba($color: #409eff, $alpha: 0.87);
   }
-  /deep/ .el-switch__label {
+  ::v-deep .el-switch__label {
     color: rgba($color: #ffffff, $alpha: 0.6);
   }
 
-  /deep/ .el-switch.is-checked .el-switch__core {
+  ::v-deep .el-switch.is-checked .el-switch__core {
     border: 1px solid rgba($color: #409eff, $alpha: 0.6);
     background-color: rgba($color: #409eff, $alpha: 0.6);
   }
 
-  /deep/ .el-radio__input.is-checked + .el-radio__label {
+  ::v-deep .el-radio__input.is-checked + .el-radio__label {
     color: rgba($color: #409eff, $alpha: 0.87);
   }
-  /deep/ .el-radio__input.is-checked .el-radio__inner {
+  ::v-deep .el-radio__input.is-checked .el-radio__inner {
     background-color: rgba($color: #409eff, $alpha: 0.6);
     border: 1px solid rgba($color: #409eff, $alpha: 0.6);
   }
-  /deep/ .el-radio.is-bordered.is-checked {
+  ::v-deep .el-radio.is-bordered.is-checked {
     border: 1px solid rgba($color: #409eff, $alpha: 0.6);
   }
-  /deep/ .el-radio.is-bordered {
+  ::v-deep .el-radio.is-bordered {
     border: 1px solid rgba($color: #ffffff, $alpha: 0.6);
   }
-  /deep/ .el-radio {
+  ::v-deep .el-radio {
     color: rgba($color: #ffffff, $alpha: 0.6);
   }
 }

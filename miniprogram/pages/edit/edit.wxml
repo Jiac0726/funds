@@ -1,0 +1,42 @@
+<view class="page">
+  <view class="search card">
+    <input class="search-input" value="{{keyword}}" placeholder="输入基金代码、名称或拼音" confirm-type="search" bindinput="onKeywordInput" />
+  </view>
+
+  <view wx:if="{{searching}}" class="searching">搜索中...</view>
+
+  <view wx:if="{{suggestions.length > 0}}" class="suggestions card">
+    <view wx:for="{{suggestions}}" wx:key="code" class="suggestion" bindtap="addFund" data-code="{{item.code}}" data-name="{{item.name}}">
+      <view>
+        <view class="suggestion-name">{{item.name}}</view>
+        <view class="suggestion-meta">{{item.code}} · {{item.type}}</view>
+      </view>
+      <text class="add-mark">添加</text>
+    </view>
+  </view>
+
+  <view class="section-title">当前自选</view>
+
+  <view wx:if="{{holdings.length === 0}}" class="card empty">还没有自选基金</view>
+
+  <view wx:for="{{holdings}}" wx:key="code" class="holding card">
+    <view class="holding-head">
+      <view>
+        <view class="holding-name">{{item.name || item.code}}</view>
+        <view class="holding-code">{{item.code}}</view>
+      </view>
+      <button class="warn-button" bindtap="removeFund" data-code="{{item.code}}" data-name="{{item.name}}">移除</button>
+    </view>
+
+    <view class="input-grid">
+      <label class="field">
+        <text>持有份额</text>
+        <input type="digit" value="{{item.num}}" data-code="{{item.code}}" bindinput="onNumInput" placeholder="0" />
+      </label>
+      <label class="field">
+        <text>成本净值</text>
+        <input type="digit" value="{{item.cost}}" data-code="{{item.code}}" bindinput="onCostInput" placeholder="选填" />
+      </label>
+    </view>
+  </view>
+</view>

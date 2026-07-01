@@ -1,0 +1,76 @@
+<view class="page">
+  <view wx:if="{{!hasBackend}}" class="notice">
+    截图导入需要先在 utils/config.js 配置 API_BASE_URL，并在后端配置视觉/OCR 引擎。当前可先继续使用手动搜索添加。
+  </view>
+
+  <view class="card panel">
+    <view class="panel-head">
+      <view class="panel-title">支付宝基金截图</view>
+      <view wx:if="{{imagePaths.length > 0}}" class="panel-count">{{imagePaths.length}} 张</view>
+    </view>
+    <view class="actions">
+      <button class="ghost-button" bindtap="chooseImages">{{imagePaths.length ? '重新选择' : '选择截图'}}</button>
+      <button wx:if="{{imagePaths.length > 0}}" class="ghost-button" bindtap="clearImages">清空</button>
+      <button class="primary-button" bindtap="recognizeImages" loading="{{loading}}">AI识别填表</button>
+    </view>
+    <view wx:if="{{imagePaths.length > 0}}" class="preview-grid">
+      <image wx:for="{{imagePaths}}" wx:key="*this" class="preview-thumb" mode="aspectFill" src="{{item}}" data-index="{{index}}" bindtap="previewImage" />
+    </view>
+    <view wx:if="{{progressText}}" class="progress-text">{{progressText}}</view>
+  </view>
+
+  <view class="card panel">
+    <view class="panel-title">粘贴 OCR 文本</view>
+    <textarea class="textarea" value="{{ocrText}}" bindinput="onTextInput" placeholder="如果暂时没有配置视觉/OCR 引擎，可先把截图 OCR 文本粘贴到这里解析。支持支付宝全部持有页和资产详情页，尽量保留基金名称、代码及金额字段。" />
+    <button class="ghost-button text-action" bindtap="recognizeText" loading="{{loading}}">解析填表</button>
+  </view>
+
+  <view wx:if="{{warnings.length > 0}}" class="card warnings">
+    <view wx:for="{{warnings}}" wx:key="*this" class="warning-item">{{item}}</view>
+  </view>
+
+  <view wx:if="{{resultItems.length > 0}}" class="section-title">确认导入表单</view>
+  <view wx:for="{{resultItems}}" wx:key="rowId" class="form-card card">
+    <view class="form-head">
+      <view>
+        <view class="form-title">第 {{index + 1}} 行</view>
+        <view wx:if="{{item.estimatedShares}}" class="hint-text">份额由持有金额估算</view>
+        <view wx:if="{{item.estimatedNav}}" class="hint-text">参考净值 {{item.estimatedNav}}</view>
+        <view wx:if="{{item.unresolved}}" class="hint-text warn-text">请补全 6 位基金代码</view>
+      </view>
+      <view class="row-tools">
+        <switch class="row-switch" checked="{{item.enabled}}" data-index="{{index}}" bindchange="onItemSwitch" />
+        <button class="mini-warn-button" data-index="{{index}}" bindtap="removeItem">删除</button>
+      </view>
+    </view>
+
+    <label class="field wide-field">
+      <text>基金名称</text>
+      <input value="{{item.name}}" data-index="{{index}}" data-field="name" bindinput="onItemInput" placeholder="基金名称" />
+    </label>
+
+    <view class="input-grid">
+      <label class="field">
+        <text>基金代码</text>
+        <input type="text" maxlength="6" value="{{item.code}}" data-index="{{index}}" data-field="code" bindinput="onItemInput" placeholder="6位代码" />
+      </label>
+      <label class="field">
+        <text>持有金额</text>
+        <input type="digit" value="{{item.amount}}" data-index="{{index}}" data-field="amount" bindinput="onItemInput" placeholder="选填" />
+      </label>
+      <label class="field">
+        <text>持有份额</text>
+        <input type="digit" value="{{item.num}}" data-index="{{index}}" data-field="num" bindinput="onItemInput" placeholder="0" />
+      </label>
+      <label class="field">
+        <text>成本净值</text>
+        <input type="digit" value="{{item.cost}}" data-index="{{index}}" data-field="cost" bindinput="onItemInput" placeholder="选填" />
+      </label>
+    </view>
+  </view>
+
+  <view wx:if="{{resultItems.length > 0}}" class="bottom-actions">
+    <button class="ghost-button" bindtap="addBlankItem">新增一行</button>
+    <button class="primary-button import-button" bindtap="applyImport">确认导入</button>
+  </view>
+</view>

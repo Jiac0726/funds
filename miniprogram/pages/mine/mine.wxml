@@ -1,0 +1,61 @@
+<view class="page">
+  <view class="profile card">
+    <view class="avatar">{{loggedIn ? '微' : '基'}}</view>
+    <view class="profile-copy">
+      <view class="title">自选基金助手</view>
+      <view class="sub">{{authStatusText}}</view>
+      <view class="version">小程序端 v{{version}}</view>
+    </view>
+    <button wx:if="{{!loggedIn}}" class="wechat-button" bindtap="loginWechat" loading="{{authLoading}}" disabled="{{!authAvailable}}">
+      {{authAvailable ? '微信登录' : '未配置'}}
+    </button>
+    <button wx:else class="logout-button" bindtap="logoutWechat" loading="{{authLoading}}">退出</button>
+  </view>
+
+  <view class="stats card">
+    <view>
+      <text class="label">当前自选</text>
+      <text class="count">{{holdingCount}}</text>
+    </view>
+    <button class="primary-button" bindtap="goEdit">管理自选</button>
+  </view>
+
+  <view class="section-title">配置</view>
+  <view class="menu card">
+    <picker class="source-picker" range="{{dataSources}}" range-key="displayLabel" value="{{sourceIndex}}" bindchange="onDataSourceChange">
+      <view class="menu-item">
+        <text>基金数据源</text>
+        <text class="menu-value">{{currentSourceLabel}} ›</text>
+      </view>
+    </picker>
+    <view class="menu-item" bindtap="exportConfig">
+      <text>导出配置</text>
+      <text class="menu-value">复制到剪贴板</text>
+    </view>
+    <view class="menu-item" bindtap="importConfig">
+      <text>导入配置</text>
+      <text class="menu-value">从剪贴板读取</text>
+    </view>
+    <view class="menu-item" bindtap="goImport">
+      <text>支付宝截图导入</text>
+      <text class="menu-value">AI识别持仓</text>
+    </view>
+    <view class="menu-item danger" bindtap="resetConfig">
+      <text>恢复默认配置</text>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <view class="section-title">关于</view>
+  <view class="menu card">
+    <view class="menu-item" bindtap="goHome">
+      <text>返回首页</text>
+      <text class="arrow">›</text>
+    </view>
+
+    <view class="menu-item muted">
+      <text>存储方式</text>
+      <text>本机小程序缓存</text>
+    </view>
+  </view>
+</view>

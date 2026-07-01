@@ -1,0 +1,70 @@
+<view class="page">
+  <view wx:if="{{holding}}" class="snapshot">
+    <view>
+      <view class="fund-name">{{holding.name || holding.code}}</view>
+      <view class="fund-code">{{holding.code}}</view>
+    </view>
+    <view class="snapshot-values">
+      <view><text>当前份额</text><text class="snapshot-strong">{{holding.numText}}</text></view>
+      <view><text>成本净值</text><text class="snapshot-strong">{{holding.costText}}</text></view>
+    </view>
+  </view>
+
+  <view class="section-title">新增记录</view>
+  <view class="form-panel">
+    <view class="kind-control">
+      <view class="kind-option {{kind === 'open' ? 'active' : ''}}" data-kind="open" bindtap="chooseKind">建仓</view>
+      <view class="kind-option {{kind === 'add' ? 'active' : ''}}" data-kind="add" bindtap="chooseKind">加仓</view>
+    </view>
+
+    <label class="field">
+      <text>交易日期</text>
+      <picker mode="date" value="{{date}}" end="{{maxDate}}" bindchange="onDateChange">
+        <view class="picker-value">{{date}}</view>
+      </picker>
+    </label>
+
+    <view class="input-grid">
+      <label class="field">
+        <text>新增份额</text>
+        <input type="digit" value="{{shares}}" data-field="shares" bindinput="onFieldInput" placeholder="必填" />
+      </label>
+      <label class="field">
+        <text>投入金额</text>
+        <input type="digit" value="{{amount}}" data-field="amount" bindinput="onFieldInput" placeholder="与成交净值二选一" />
+      </label>
+      <label class="field">
+        <text>成交净值</text>
+        <input type="digit" value="{{price}}" data-field="price" bindinput="onFieldInput" placeholder="可由金额回算" />
+      </label>
+      <label class="field">
+        <text>备注</text>
+        <input value="{{note}}" data-field="note" bindinput="onFieldInput" maxlength="40" placeholder="选填" />
+      </label>
+    </view>
+
+    <button class="primary-button save-button" bindtap="saveTransaction">保存记录</button>
+  </view>
+
+  <view class="section-title">
+    <text>历史记录</text>
+    <text class="record-count">{{transactions.length}} 条</text>
+  </view>
+
+  <view wx:if="{{transactions.length === 0}}" class="empty">暂无建仓或加仓记录</view>
+  <view wx:for="{{transactions}}" wx:key="id" class="transaction-row">
+    <view class="transaction-main">
+      <view class="transaction-kind">{{item.kindText}}</view>
+      <view>
+        <view class="transaction-date">{{item.date}}</view>
+        <view wx:if="{{item.note}}" class="transaction-note">{{item.note}}</view>
+      </view>
+    </view>
+    <view class="transaction-values">
+      <text>{{item.sharesText}} 份</text>
+      <text>{{item.amountText}} 元</text>
+      <text>净值 {{item.priceText}}</text>
+    </view>
+    <button class="delete-button" data-id="{{item.id}}" bindtap="removeTransaction">删除</button>
+  </view>
+</view>

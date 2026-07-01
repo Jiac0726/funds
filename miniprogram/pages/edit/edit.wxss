@@ -1,0 +1,92 @@
+.search {
+  padding: 18rpx 22rpx;
+}
+
+.search-input {
+  min-height: 62rpx;
+  font-size: 28rpx;
+}
+
+.searching {
+  padding: 18rpx 4rpx 0;
+  color: #7c8794;
+}
+
+.suggestions {
+  margin-top: 16rpx;
+  overflow: hidden;
+}
+
+.suggestion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+  padding: 22rpx;
+  border-bottom: 1rpx solid #edf1f5;
+}
+
+.suggestion:last-child {
+  border-bottom: 0;
+}
+
+.suggestion-name,
+.holding-name {
+  max-width: 460rpx;
+  color: #202832;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.suggestion-meta,
+.holding-code {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #8793a0;
+}
+
+.add-mark {
+  color: #276ef1;
+  font-size: 25rpx;
+}
+
+.holding {
+  padding: 24rpx;
+  margin-bottom: 18rpx;
+}
+
+.holding-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.input-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18rpx;
+  margin-top: 22rpx;
+}
+
+.field {
+  display: block;
+  padding: 16rpx;
+  background: #f8fafc;
+  border-radius: 8rpx;
+}
+
+.field text {
+  display: block;
+  margin-bottom: 8rpx;
+  font-size: 23rpx;
+  color: #7d8996;
+}
+
+.field input {
+  min-height: 56rpx;
+  font-size: 30rpx;
+  color: #1f2730;
+}

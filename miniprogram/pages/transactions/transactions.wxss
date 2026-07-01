@@ -1,0 +1,165 @@
+.snapshot {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24rpx;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #e5ebf2;
+}
+
+.fund-name {
+  max-width: 420rpx;
+  font-size: 32rpx;
+  font-weight: 800;
+  color: #1f2730;
+}
+
+.fund-code {
+  margin-top: 8rpx;
+  color: #8793a0;
+  font-size: 24rpx;
+}
+
+.snapshot-values {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(130rpx, 1fr));
+  gap: 12rpx;
+}
+
+.snapshot-values view {
+  text-align: right;
+}
+
+.snapshot-values text,
+.snapshot-strong {
+  display: block;
+}
+
+.snapshot-values text {
+  color: #8793a0;
+  font-size: 22rpx;
+}
+
+.snapshot-strong {
+  margin-top: 6rpx;
+  font-size: 27rpx;
+}
+
+.form-panel {
+  padding: 24rpx 0;
+  border-top: 1rpx solid #e5ebf2;
+  border-bottom: 1rpx solid #e5ebf2;
+}
+
+.kind-control {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  width: 320rpx;
+  margin-bottom: 22rpx;
+  border: 1rpx solid #cfd9e6;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.kind-option {
+  padding: 16rpx;
+  text-align: center;
+  color: #687481;
+  background: #ffffff;
+}
+
+.kind-option.active {
+  color: #ffffff;
+  background: #276ef1;
+  font-weight: 700;
+}
+
+.field {
+  display: block;
+  margin-bottom: 18rpx;
+}
+
+.field > text {
+  display: block;
+  margin-bottom: 8rpx;
+  color: #667282;
+  font-size: 24rpx;
+}
+
+.field input,
+.picker-value {
+  min-height: 72rpx;
+  padding: 0 18rpx;
+  border: 1rpx solid #dfe6ee;
+  border-radius: 8rpx;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.picker-value {
+  display: flex;
+  align-items: center;
+}
+
+.input-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 18rpx;
+}
+
+.save-button {
+  width: 100%;
+  margin-top: 4rpx;
+}
+
+.record-count {
+  color: #8793a0;
+  font-size: 24rpx;
+  font-weight: 400;
+}
+
+.transaction-row {
+  position: relative;
+  padding: 22rpx 0;
+  border-bottom: 1rpx solid #e5ebf2;
+}
+
+.transaction-main {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+
+.transaction-kind {
+  padding: 8rpx 12rpx;
+  border-radius: 6rpx;
+  color: #276ef1;
+  background: #eef4ff;
+  font-size: 22rpx;
+}
+
+.transaction-date {
+  font-weight: 700;
+}
+
+.transaction-note {
+  margin-top: 4rpx;
+  color: #8793a0;
+  font-size: 22rpx;
+}
+
+.transaction-values {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 14rpx;
+  color: #5f6b78;
+  font-size: 24rpx;
+}
+
+.delete-button {
+  position: absolute;
+  right: 0;
+  top: 20rpx;
+  color: #c73636;
+  font-size: 24rpx;
+}

@@ -1,0 +1,169 @@
+.notice {
+  margin-bottom: 18rpx;
+  padding: 18rpx 20rpx;
+  border-radius: 8rpx;
+  color: #8a5a00;
+  background: #fff6db;
+  border: 1rpx solid #f4df9f;
+  line-height: 1.5;
+}
+
+.panel {
+  padding: 24rpx;
+  margin-bottom: 18rpx;
+}
+
+.panel-head,
+.form-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18rpx;
+  margin-bottom: 18rpx;
+}
+
+.panel-title {
+  font-size: 30rpx;
+  font-weight: 800;
+}
+
+.panel-count,
+.hint-text {
+  color: #7d8996;
+  font-size: 24rpx;
+}
+
+.actions,
+.bottom-actions,
+.row-tools {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  flex-wrap: wrap;
+}
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12rpx;
+  margin-top: 18rpx;
+}
+
+.preview-thumb {
+  width: 100%;
+  height: 188rpx;
+  border-radius: 8rpx;
+  background: #f1f4f8;
+}
+
+.progress-text {
+  margin-top: 16rpx;
+  color: #276ef1;
+  font-size: 24rpx;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 220rpx;
+  padding: 18rpx;
+  box-sizing: border-box;
+  background: #f8fafc;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  line-height: 1.5;
+}
+
+.text-action {
+  margin-top: 18rpx;
+}
+
+.warnings {
+  padding: 18rpx 22rpx;
+  margin-bottom: 18rpx;
+  color: #8a5a00;
+  background: #fffdf4;
+}
+
+.warning-item {
+  padding: 8rpx 0;
+  line-height: 1.45;
+}
+
+.form-card {
+  padding: 24rpx;
+  margin-bottom: 18rpx;
+}
+
+.form-title {
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+.warn-text {
+  color: #c73636;
+}
+
+.row-switch {
+  transform: scale(0.78);
+  transform-origin: center right;
+}
+
+.mini-warn-button {
+  min-width: 96rpx;
+  height: 56rpx;
+  padding: 0 18rpx;
+  border: 0;
+  border-radius: 8rpx;
+  color: #c73636;
+  background: #fff1f1;
+  font-size: 24rpx;
+  line-height: 56rpx;
+}
+
+.input-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.field {
+  display: block;
+  min-width: 0;
+}
+
+.wide-field {
+  margin-top: 8rpx;
+}
+
+.field text {
+  display: block;
+  margin-bottom: 8rpx;
+  color: #7d8996;
+  font-size: 23rpx;
+}
+
+.field input {
+  width: 100%;
+  height: 72rpx;
+  padding: 0 16rpx;
+  box-sizing: border-box;
+  border-radius: 8rpx;
+  background: #f8fafc;
+  color: #1f2933;
+  font-size: 27rpx;
+}
+
+.bottom-actions {
+  align-items: stretch;
+  margin: 10rpx 0 40rpx;
+}
+
+.bottom-actions button {
+  flex: 1;
+  min-width: 0;
+}
+
+.import-button {
+  margin: 0;
+}

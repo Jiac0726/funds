@@ -1,0 +1,166 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+  <view wx:if="{{error}}" class="notice">{{error}}</view>
+
+  <view wx:if="{{fund}}" class="detail card">
+    <view class="fund-head">
+      <view>
+        <view class="fund-name">{{fund.name}}</view>
+        <view class="fund-code">{{fund.fundcode}}</view>
+      </view>
+      <view class="fund-rate {{fund.valueClass}}">{{fund.gszzlText}}</view>
+    </view>
+
+    <view class="metrics">
+      <view>
+        <text class="label">{{fund.currentNavLabel}}</text>
+        <text>{{fund.currentNav}}</text>
+      </view>
+      <view>
+        <text class="label">单位净值</text>
+        <text>{{fund.dwjz}}</text>
+      </view>
+      <view>
+        <text class="label">{{fund.dayGainLabel}}</text>
+        <text class="{{fund.dayGainClass}}">{{fund.dayGain}}</text>
+      </view>
+      <view>
+        <text class="label">{{fund.costGainLabel}}</text>
+        <text class="{{fund.costGainClass}}">{{fund.costGain}}</text>
+      </view>
+      <view>
+        <text class="label">份额</text>
+        <text>{{fund.numText}}</text>
+      </view>
+      <view>
+        <text class="label">成本净值</text>
+        <text>{{fund.costText}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{fund.quoteStatusText}}" class="quote-status">{{fund.quoteStatusText}}</view>
+
+    <view class="update-row">
+      <text>净值日期 {{fund.jzrq}}</text>
+      <text>更新 {{fund.updateText}}</text>
+    </view>
+  </view>
+
+  <view class="section-title">
+    <text>基金持仓明细</text>
+    <text class="section-meta">{{positionInfo.expansionText}}</text>
+  </view>
+
+  <view class="position card">
+    <view class="position-summary">
+      <text>股票合计占净值</text>
+      <text class="position-total">{{positionInfo.totalRatio}}</text>
+    </view>
+    <view wx:if="{{positionInfo.stocks.length === 0}}" class="empty position-empty">暂无公开持仓数据</view>
+    <view wx:for="{{positionInfo.stocks}}" wx:key="code" class="position-row">
+      <view class="position-main">
+        <text class="position-rank">{{item.rank}}</text>
+        <view class="position-name-box">
+          <text class="position-name">{{item.name}}</text>
+          <text class="position-code">{{item.code}}</text>
+        </view>
+      </view>
+      <view class="position-ratio-box">
+        <view class="position-ratio-line">
+          <text>占比</text>
+          <text class="position-ratio">{{item.ratio}}</text>
+        </view>
+        <view class="position-bar"><view class="position-bar-inner" style="width: {{item.ratioValue}}%;"></view></view>
+        <view class="position-market">
+          <text>股价 {{item.price}}</text>
+          <text class="{{item.quoteClass}}">{{item.quoteChangeRate}}</text>
+          <text class="{{item.compareClass}}">较上期 {{item.compare}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view class="position-note">持仓来自基金定期报告披露，通常不是实时仓位。</view>
+
+  <view class="section-title">
+    <text>三个月持仓回算</text>
+    <button class="ghost-button record-button" bindtap="goTransactions">记录 {{transactionCount}}</button>
+  </view>
+
+  <view wx:if="{{chartSummary}}" class="history-summary">
+    <view>
+      <text>最新持有收益</text>
+      <text class="summary-strong {{chartSummary.latestClass}}">{{chartSummary.latest}}</text>
+    </view>
+    <view>
+      <text>区间最高</text>
+      <text class="summary-strong">{{chartSummary.highest}}</text>
+    </view>
+    <view>
+      <text>区间最低</text>
+      <text class="summary-strong">{{chartSummary.lowest}}</text>
+    </view>
+  </view>
+
+  <view wx:if="{{chartSeries.length > 1}}" class="profit-chart-wrap">
+    <canvas id="profitChart" canvas-id="profitChart" class="profit-chart"></canvas>
+    <view class="chart-axis">
+      <text>{{chartSummary.startDate}}</text>
+      <text>{{chartSummary.endDate}}</text>
+    </view>
+  </view>
+
+  <view wx:if="{{calculationRows.length === 0}}" class="empty">暂无三个月净值数据</view>
+  <view wx:if="{{calculationRows.length > 0}}" class="calculation-table">
+    <view class="calculation-row calculation-head">
+      <text>日期</text>
+      <text>份额</text>
+      <text>持有金额</text>
+      <text>持有收益</text>
+    </view>
+    <scroll-view scroll-y class="calculation-scroll">
+      <view wx:for="{{calculationRows}}" wx:key="date" class="calculation-row">
+        <text>{{item.date}}</text>
+        <text>{{item.shares}}</text>
+        <text>{{item.amount}}</text>
+        <view>
+          <text class="{{item.gainClass}}">{{item.gain}}</text>
+          <text class="row-rate {{item.gainClass}}">{{item.rate}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view wx:if="{{rankRows.length > 0}}" class="section-title">阶段表现</view>
+  <view wx:if="{{rankRows.length > 0}}" class="rank-grid card">
+    <view wx:for="{{rankRows}}" wx:key="label" class="rank-item">
+      <text class="label">{{item.label}}</text>
+      <text class="rank-rate {{item.rateClass}}">{{item.rate}}</text>
+      <text class="rank-text">排名 {{item.rank || '--'}}</text>
+    </view>
+  </view>
+
+  <view wx:if="{{infoRows.length > 0}}" class="section-title">基金资料</view>
+  <view wx:if="{{infoRows.length > 0}}" class="info card">
+    <view wx:for="{{infoRows}}" wx:key="label" class="info-row">
+      <text class="info-label">{{item.label}}</text>
+      <text class="info-value">{{item.value}}</text>
+    </view>
+  </view>
+
+  <view class="section-title">最近净值</view>
+  <view class="history card">
+    <view class="history-row history-head">
+      <text>日期</text>
+      <text>单位净值</text>
+      <text>累计净值</text>
+      <text>日增长</text>
+    </view>
+    <view wx:if="{{history.length === 0}}" class="empty">暂无净值数据</view>
+    <view wx:for="{{history}}" wx:key="date" class="history-row">
+      <text>{{item.date}}<text wx:if="{{item.estimated}}" class="estimate-tag">估</text></text>
+      <text>{{item.dwjz}}</text>
+      <text>{{item.ljjz}}</text>
+      <text class="{{item.rateClass}}">{{item.rate}}</text>
+    </view>
+  </view>
+</view>

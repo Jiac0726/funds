@@ -1,0 +1,40 @@
+{
+    "pages":  [
+                  "pages/index/index",
+                  "pages/history/history",
+                  "pages/mine/mine",
+                  "pages/import/import",
+                  "pages/edit/edit",
+                  "pages/detail/detail",
+                  "pages/transactions/transactions"
+              ],
+    "window":  {
+                   "navigationBarTitleText":  "自选基金助手",
+                   "navigationBarBackgroundColor":  "#ffffff",
+                   "navigationBarTextStyle":  "black",
+                   "backgroundColor":  "#f6f7f9",
+                   "backgroundTextStyle":  "dark"
+               },
+    "tabBar":  {
+                   "color":  "#8a96a3",
+                   "selectedColor":  "#276ef1",
+                   "backgroundColor":  "#ffffff",
+                   "borderStyle":  "white",
+                   "list":  [
+                                {
+                                    "pagePath":  "pages/index/index",
+                                    "text":  "首页"
+                                },
+                                {
+                                    "pagePath":  "pages/history/history",
+                                    "text":  "净值"
+                                },
+                                {
+                                    "pagePath":  "pages/mine/mine",
+                                    "text":  "我的"
+                                }
+                            ]
+               },
+    "style":  "v2",
+    "sitemapLocation":  "sitemap.json"
+}

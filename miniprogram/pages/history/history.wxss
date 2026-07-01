@@ -1,0 +1,111 @@
+.fund-tabs {
+  white-space: nowrap;
+  margin-bottom: 18rpx;
+}
+
+.fund-tab-row {
+  display: inline-flex;
+  gap: 14rpx;
+}
+
+.fund-tab {
+  max-width: 220rpx;
+  padding: 16rpx 22rpx;
+  border-radius: 8rpx;
+  background: #ffffff;
+  color: #657180;
+  border: 1rpx solid #e5ebf2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fund-tab.active {
+  color: #276ef1;
+  background: #eef4ff;
+  border-color: #cfe0ff;
+  font-weight: 700;
+}
+
+.notice,
+.loading {
+  margin-bottom: 16rpx;
+  color: #7d8996;
+}
+
+.notice {
+  padding: 16rpx 20rpx;
+  border-radius: 8rpx;
+  color: #8a5a00;
+  background: #fff6db;
+  border: 1rpx solid #f4df9f;
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24rpx;
+  padding: 24rpx;
+}
+
+.fund-name {
+  max-width: 500rpx;
+  font-size: 32rpx;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fund-code {
+  margin-top: 8rpx;
+  color: #8793a0;
+  font-size: 24rpx;
+}
+
+.calculation-source {
+  max-width: 500rpx;
+  margin-top: 8rpx;
+  color: #8a5a00;
+  font-size: 22rpx;
+  white-space: normal;
+}
+
+.rate {
+  font-size: 36rpx;
+  font-weight: 800;
+}
+
+.history {
+  overflow: hidden;
+}
+
+.history-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr;
+  gap: 12rpx;
+  padding: 20rpx 18rpx;
+  border-bottom: 1rpx solid #edf1f5;
+  font-size: 25rpx;
+}
+
+.history-row:last-child {
+  border-bottom: 0;
+}
+
+.history-head {
+  color: #7d8996;
+  background: #f8fafc;
+  font-size: 23rpx;
+}
+.estimate-tag {
+  display: inline-block;
+  margin-left: 6rpx;
+  padding: 0 6rpx;
+  border-radius: 6rpx;
+  color: #276ef1;
+  background: #eef4ff;
+  font-size: 18rpx;
+  line-height: 26rpx;
+}

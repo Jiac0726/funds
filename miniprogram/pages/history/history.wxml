@@ -1,0 +1,38 @@
+<view class="page">
+  <scroll-view wx:if="{{holdings.length > 0}}" scroll-x class="fund-tabs">
+    <view class="fund-tab-row">
+      <view wx:for="{{holdings}}" wx:key="code" class="fund-tab {{selectedCode === item.code ? 'active' : ''}}" bindtap="changeFund" data-code="{{item.code}}">
+        {{item.name || item.code}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{error}}" class="notice">{{error}}</view>
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+
+  <view wx:if="{{selectedFund}}" class="summary card" bindtap="openDetail">
+    <view>
+      <view class="fund-name">{{selectedFund.name}}</view>
+      <view class="fund-code">{{selectedFund.fundcode}}</view>
+      <view wx:if="{{selectedFund.quoteStatusText}}" class="calculation-source">{{selectedFund.quoteStatusText}}</view>
+    </view>
+    <view class="rate {{selectedFund.valueClass}}">{{selectedFund.gszzlText}}</view>
+  </view>
+
+  <view class="section-title">最近净值</view>
+  <view class="history card">
+    <view class="history-row history-head">
+      <text>日期</text>
+      <text>单位净值</text>
+      <text>累计净值</text>
+      <text>日增长</text>
+    </view>
+    <view wx:if="{{history.length === 0}}" class="empty">暂无净值数据</view>
+    <view wx:for="{{history}}" wx:key="date" class="history-row">
+      <text>{{item.date}}<text wx:if="{{item.estimated}}" class="estimate-tag">估</text></text>
+      <text>{{item.dwjz}}</text>
+      <text>{{item.ljjz}}</text>
+      <text class="{{item.rateClass}}">{{item.rate}}</text>
+    </view>
+  </view>
+</view>

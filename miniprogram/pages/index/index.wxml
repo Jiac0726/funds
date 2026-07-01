@@ -1,0 +1,115 @@
+<view class="page">
+  <view class="summary card">
+    <view class="summary-head">
+      <view>
+        <view class="summary-title">自选基金助手</view>
+        <view class="summary-sub"><text class="live-dot"></text> 自动更新 {{autoRefreshSeconds}}秒 · {{lastUpdated}}</view>
+      </view>
+      <button class="ghost-button" bindtap="refresh" loading="{{loading}}">刷新</button>
+    </view>
+
+    <view class="live-preview">
+      <view>
+        <text class="label">{{summary.previewTitle}}</text>
+        <text class="preview-value {{summary.previewClass}}">{{summary.previewValue}}</text>
+      </view>
+      <view class="preview-side">
+        <text>日收益率</text>
+        <text class="preview-rate {{summary.dayRateClass}}">{{summary.previewRate}}</text>
+        <text>{{summary.previewHint}} · {{lastUpdated}}</text>
+      </view>
+    </view>
+
+    <view class="summary-grid">
+      <view class="summary-item">
+        <text class="label">{{summary.amountLabel}}</text>
+        <text class="value">{{summary.totalAmount}}</text>
+      </view>
+      <view class="summary-item">
+        <text class="label">{{summary.dayGainLabel}}</text>
+        <text class="value {{summary.totalDayGainClass}}">{{summary.totalDayGain}}</text>
+      </view>
+      <view class="summary-item">
+        <text class="label">日收益率</text>
+        <text class="value {{summary.dayRateClass}}">{{summary.dayRate}}</text>
+      </view>
+      <view class="summary-item">
+        <text class="label">{{summary.costGainLabel}}</text>
+        <text class="value {{summary.totalCostGainClass}}">{{summary.totalCostGain}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{error}}" class="notice">{{error}}</view>
+
+  <view class="section-title">指数行情</view>
+  <scroll-view scroll-x class="index-scroll">
+    <view class="index-row">
+      <view wx:for="{{indexList}}" wx:key="code" class="index-card card">
+        <view class="index-name">{{item.name}}</view>
+        <view class="index-price {{item.valueClass}}">{{item.price}}</view>
+        <view class="index-change {{item.valueClass}}">{{item.change}} {{item.rate}}</view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="section-title">
+    <text>自选基金</text>
+    <button class="primary-button" bindtap="goEdit">管理</button>
+  </view>
+
+  <scroll-view wx:if="{{funds.length > 1}}" scroll-x class="sort-scroll">
+    <view class="sort-row">
+      <view wx:for="{{sortOptions}}" wx:key="key" class="sort-chip {{sortKey === item.key ? 'active' : ''}}" bindtap="changeSort" data-key="{{item.key}}">
+        {{item.label}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{funds.length === 0}}" class="card empty">
+    <view>还没有自选基金</view>
+    <button class="primary-button empty-action" bindtap="goEdit">添加自选</button>
+  </view>
+
+  <view wx:for="{{funds}}" wx:key="fundcode" class="fund-card card" bindtap="openDetail" data-code="{{item.fundcode}}">
+    <view class="fund-main">
+      <view>
+        <view class="fund-name">{{item.name}}</view>
+        <view class="fund-code">{{item.fundcode}}</view>
+      </view>
+      <view class="fund-rate {{item.valueClass}}">{{item.gszzlText}}</view>
+    </view>
+
+    <view class="fund-grid">
+      <view>
+        <text class="label">{{item.currentNavLabel}}</text>
+        <text>{{item.currentNav}}</text>
+      </view>
+      <view>
+        <text class="label">单位净值</text>
+        <text>{{item.dwjz}}</text>
+      </view>
+      <view>
+        <text class="label">{{item.amountLabel}}</text>
+        <text>{{item.amount}}</text>
+      </view>
+      <view>
+        <text class="label">{{item.dayGainLabel}}</text>
+        <text class="{{item.dayGainClass}}">{{item.dayGain}}</text>
+      </view>
+      <view>
+        <text class="label">{{item.costGainLabel}}</text>
+        <text class="{{item.costGainClass}}">{{item.costGain}}</text>
+      </view>
+      <view>
+        <text class="label">持有收益率</text>
+        <text class="{{item.costGainClass}}">{{item.costRate}}</text>
+      </view>
+    </view>
+
+    <view class="fund-foot">
+      <text>份额 {{item.numText}}</text>
+      <text>更新 {{item.updateText}}</text>
+    </view>
+  </view>
+</view>
