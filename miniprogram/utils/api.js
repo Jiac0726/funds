@@ -275,9 +275,12 @@ function fetchFundQuotes(codes) {
   const url = hasBackend()
     ? buildApiUrl("/api/funds/quotes", { codes: list, source })
     : `https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=200&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=mini-program&Fcodes=${list}&_=${Date.now()}`;
-  return request(url)
+  const quoteRequest = request(url)
     .then((data) => (data && data.Datas ? data.Datas : []))
     .then((rows) => (!hasBackend() && source === "eastmoney" ? supplementWithFundGzEstimates(codeList, rows) : rows));
+  if (!hasBackend() || source === "eastmoney") return quoteRequest;
+  return quoteRequest.catch(() => request(buildApiUrl("/api/funds/quotes", { codes: list, source: "eastmoney" }))
+    .then((data) => (data && data.Datas ? data.Datas : [])));
 }
 
 function fetchIndexQuotes(secids) {
@@ -298,7 +301,10 @@ function fetchFundNetHistory(code, range = "y") {
   const url = hasBackend()
     ? buildApiUrl(`/api/funds/${code}/net-history`, { range, source })
     : `https://fundmobapi.eastmoney.com/FundMApi/FundNetDiagram.ashx?FCODE=${code}&RANGE=${range}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&_=${Date.now()}`;
-  return request(url).then((data) => (data && data.Datas ? data.Datas : []));
+  const historyRequest = request(url).then((data) => (data && data.Datas ? data.Datas : []));
+  if (!hasBackend() || source === "eastmoney") return historyRequest;
+  return historyRequest.catch(() => request(buildApiUrl(`/api/funds/${code}/net-history`, { range, source: "eastmoney" }))
+    .then((data) => (data && data.Datas ? data.Datas : [])));
 }
 
 function fetchFundBaseInfo(code) {
