@@ -1,6 +1,7 @@
 const http = require("node:http");
 const crypto = require("node:crypto");
 const { URL } = require("node:url");
+const userStore = require("./tencent-user-store");
 
 const PORT = Number(process.env.PORT || 8080);
 const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 10000);
@@ -1032,12 +1033,21 @@ async function routeGet(req, reqUrl) {
   }
 
   if (pathname === "/api/auth/status") {
-    return { status: 200, body: { ok: true, available: authConfigured() } };
+    return { status: 200, body: { ok: true, available: authConfigured(), storageAvailable: userStore.configured() } };
   }
 
   if (pathname === "/api/auth/me") {
     const session = requireAuth(req);
     return { status: 200, body: { ok: true, user: publicUser(session.oid), expiresAt: session.exp } };
+  }
+
+  if (pathname === "/api/user/state") {
+    const session = requireAuth(req);
+    const payload = await userStore.loadUserState(session.oid);
+    return {
+      status: 200,
+      body: { ok: true, state: payload ? payload.state : null, updatedAt: payload ? payload.updatedAt : null }
+    };
   }
 
   if (pathname === "/api/data-sources") {
@@ -1144,6 +1154,18 @@ async function routePost(req, reqUrl) {
   if (pathname === "/api/auth/logout") {
     requireAuth(req);
     return { status: 200, body: { ok: true } };
+  }
+
+  if (pathname === "/api/user/state") {
+    const session = requireAuth(req);
+    const body = parseJsonBody(await readBody(req, 512 * 1024));
+    if (!body.state || typeof body.state !== "object" || Array.isArray(body.state)) {
+      const error = new Error("Invalid user state");
+      error.status = 400;
+      throw error;
+    }
+    const payload = await userStore.saveUserState(session.oid, body.state);
+    return { status: 200, body: { ok: true, updatedAt: payload.updatedAt } };
   }
 
   if (pathname === "/api/import/alipay-text") {

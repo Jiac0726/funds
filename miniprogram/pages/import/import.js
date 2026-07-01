@@ -13,6 +13,33 @@ function cleanNumber(value) {
   return cleanText(value).replace(/[,，￥¥元份\s]/g, "");
 }
 
+function positiveNumber(value) {
+  const number = Number(cleanNumber(value));
+  return Number.isFinite(number) && number > 0 ? number : NaN;
+}
+
+function todayText() {
+  const date = new Date();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
+function importBaseline(item, importDate) {
+  const shares = positiveNumber(item.num);
+  const amount = positiveNumber(item.amount);
+  const nav = positiveNumber(item.estimatedNav);
+  const baseline = { profitStartDate: importDate };
+  if (Number.isFinite(amount)) baseline.profitStartAmount = amount.toFixed(2);
+  if (Number.isFinite(shares)) baseline.profitStartShares = String(item.num || shares);
+  if (Number.isFinite(amount) && Number.isFinite(shares)) {
+    baseline.profitStartNav = (amount / shares).toFixed(4);
+  } else if (Number.isFinite(nav)) {
+    baseline.profitStartNav = nav.toFixed(4);
+  }
+  return baseline;
+}
+
 function rowIdFor(item, index) {
   const code = cleanText(item.code);
   if (validCode(code)) return `code-${code}`;
@@ -32,6 +59,7 @@ function importableItems(items) {
         name,
         num: cleanNumber(item.shares || item.num || ""),
         cost: cleanNumber(item.cost || ""),
+        costAmount: cleanNumber(item.costAmount || item.totalCost || ""),
         amount: cleanNumber(item.amount || ""),
         estimatedShares: !!item.estimatedShares,
         estimatedNav: cleanNumber(item.estimatedNav || ""),
@@ -58,6 +86,7 @@ function mergeResultItems(baseItems, nextItems) {
         name: normalized.name || current.name || code,
         num: normalized.num || current.num || "",
         cost: normalized.cost || current.cost || "",
+        costAmount: normalized.costAmount || current.costAmount || "",
         amount: normalized.amount || current.amount || "",
         estimatedShares: !!(current.estimatedShares || normalized.estimatedShares),
         estimatedNav: normalized.estimatedNav || current.estimatedNav || "",
@@ -200,6 +229,22 @@ Page({
         this.setData({ [`resultItems[${index}].num`]: (amount / nav).toFixed(2) });
       }
     }
+    if (field === "num" || field === "cost") {
+      const item = this.data.resultItems[index] || {};
+      const shares = positiveNumber(field === "num" ? value : item.num);
+      const cost = positiveNumber(field === "cost" ? value : item.cost);
+      if (Number.isFinite(shares) && Number.isFinite(cost)) {
+        this.setData({ [`resultItems[${index}].costAmount`]: (shares * cost).toFixed(2) });
+      }
+    }
+    if (field === "costAmount") {
+      const item = this.data.resultItems[index] || {};
+      const shares = positiveNumber(item.num);
+      const costAmount = positiveNumber(value);
+      if (Number.isFinite(shares) && Number.isFinite(costAmount)) {
+        this.setData({ [`resultItems[${index}].cost`]: (costAmount / shares).toFixed(4) });
+      }
+    }
   },
 
   onItemSwitch(event) {
@@ -223,6 +268,7 @@ Page({
       name: "",
       num: "",
       cost: "",
+      costAmount: "",
       amount: "",
       estimatedShares: false,
       estimatedNav: "",
@@ -251,12 +297,22 @@ Page({
         return null;
       }
       seen[code] = true;
+      const num = cleanNumber(item.num) || "0";
+      let cost = cleanNumber(item.cost);
+      const costAmount = cleanNumber(item.costAmount);
+      const sharesValue = positiveNumber(num);
+      const costAmountValue = positiveNumber(costAmount);
+      if (!cost && Number.isFinite(sharesValue) && Number.isFinite(costAmountValue)) {
+        cost = (costAmountValue / sharesValue).toFixed(4);
+      }
       cleaned.push({
         code,
         name: cleanText(item.name) || code,
-        num: cleanNumber(item.num) || "0",
-        cost: cleanNumber(item.cost),
-        amount: cleanNumber(item.amount)
+        num,
+        cost,
+        costAmount,
+        amount: cleanNumber(item.amount),
+        estimatedNav: cleanNumber(item.estimatedNav)
       });
     }
     return cleaned;
@@ -267,24 +323,33 @@ Page({
     if (!items) return;
 
     const state = getState();
+    const importDate = todayText();
     let added = 0;
     let updated = 0;
     items.forEach((item) => {
       const current = state.holdings.find((holding) => holding.code === item.code);
+      const baseline = importBaseline(item, importDate);
       if (current) {
         if (item.name) current.name = item.name;
         if (item.num && item.num !== "0") current.num = item.num;
         if (item.cost) current.cost = item.cost;
+        Object.assign(current, baseline);
         updated += 1;
       } else {
-        state.holdings.push({ code: item.code, name: item.name, num: item.num || "0", cost: item.cost || "" });
+        state.holdings.push({
+          code: item.code,
+          name: item.name,
+          num: item.num || "0",
+          cost: item.cost || "",
+          ...baseline
+        });
         added += 1;
       }
     });
     saveState(state);
     wx.showModal({
       title: "导入完成",
-      content: `新增 ${added} 只，更新 ${updated} 只。`,
+      content: `新增 ${added} 只，更新 ${updated} 只。持有收益从 ${importDate} 开始计算。`,
       showCancel: false,
       success: () => wx.navigateBack()
     });

@@ -150,3 +150,7 @@ const API_BASE_URL = "https://api.example.com";
 ## 说明
 
 这个代理服务不存储用户自选基金数据，只做行情接口转发、短缓存和截图解析。自选基金、份额、成本仍保存在小程序本地缓存中。
+
+## 腾讯云用户数据存储
+
+登录后可在“我的”页将持仓备份到腾讯云 COS，或从云端恢复。创建私有 COS Bucket，并在服务器 `.env` 配置 `TENCENT_COS_SECRET_ID`、`TENCENT_COS_SECRET_KEY`、`TENCENT_COS_BUCKET`、`TENCENT_COS_REGION`，`TENCENT_COS_PREFIX` 可选。建议给专用 CAM 子账号只授予该 Bucket 指定前缀的 GetObject/PutObject 权限。密钥只保存在服务器，用户对象名由 openid 哈希生成。

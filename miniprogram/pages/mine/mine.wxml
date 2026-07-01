@@ -28,6 +28,14 @@
         <text class="menu-value">{{currentSourceLabel}} ›</text>
       </view>
     </picker>
+    <view wx:if="{{loggedIn && cloudAvailable}}" class="menu-item" bindtap="backupCloud">
+      <text>备份到腾讯云</text>
+      <text class="menu-value">{{cloudLoading ? '处理中' : '上传当前数据'}}</text>
+    </view>
+    <view wx:if="{{loggedIn && cloudAvailable}}" class="menu-item" bindtap="restoreCloud">
+      <text>从腾讯云恢复</text>
+      <text class="menu-value">覆盖本地数据</text>
+    </view>
     <view class="menu-item" bindtap="exportConfig">
       <text>导出配置</text>
       <text class="menu-value">复制到剪贴板</text>
@@ -55,7 +63,7 @@
 
     <view class="menu-item muted">
       <text>存储方式</text>
-      <text>本机小程序缓存</text>
+      <text>{{cloudAvailable ? '本机缓存 + 腾讯云 COS' : '本机小程序缓存'}}</text>
     </view>
   </view>
 </view>

@@ -367,6 +367,16 @@ function wechatLogout() {
   });
 }
 
+function fetchCloudState() {
+  return ensureBackend()
+    .then(() => request(buildApiUrl("/api/user/state")))
+    .then((data) => ({ state: data && data.state || null, updatedAt: data && data.updatedAt || "" }));
+}
+
+function saveCloudState(state) {
+  return postJson("/api/user/state", { state });
+}
+
 function fetchDataSources() {
   if (!hasBackend()) {
     return Promise.resolve([
@@ -401,6 +411,8 @@ module.exports = {
   fetchCurrentUser,
   wechatLogin,
   wechatLogout,
+  fetchCloudState,
+  saveCloudState,
   fetchFundSearch,
   fetchFundQuotes,
   fetchIndexQuotes,

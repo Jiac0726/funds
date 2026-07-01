@@ -66,6 +66,10 @@
         <text>成本净值</text>
         <input type="digit" value="{{item.cost}}" data-index="{{index}}" data-field="cost" bindinput="onItemInput" placeholder="选填" />
       </label>
+      <label class="field">
+        <text>成本金额</text>
+        <input type="digit" value="{{item.costAmount}}" data-index="{{index}}" data-field="costAmount" bindinput="onItemInput" placeholder="选填" />
+      </label>
     </view>
   </view>
 

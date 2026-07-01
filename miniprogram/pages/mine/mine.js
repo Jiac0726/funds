@@ -10,7 +10,9 @@ const {
   fetchAuthStatus,
   fetchCurrentUser,
   wechatLogin,
-  wechatLogout
+  wechatLogout,
+  fetchCloudState,
+  saveCloudState
 } = require("../../utils/api");
 
 const FALLBACK_SOURCES = [
@@ -35,6 +37,8 @@ Page({
     currentSourceLabel: "东方财富",
     authAvailable: false,
     authLoading: false,
+    cloudAvailable: false,
+    cloudLoading: false,
     loggedIn: false,
     userId: "",
     authStatusText: "未登录"
@@ -99,6 +103,7 @@ Page({
     fetchAuthStatus()
       .then((status) => {
         const available = !!(status && status.available);
+        this.setData({ cloudAvailable: !!(status && status.storageAvailable) });
         if (!available) {
           this.setData({
             authAvailable: false,
@@ -162,6 +167,40 @@ Page({
       });
       wx.showToast({ title: "已退出", icon: "none" });
     });
+  },
+
+  backupCloud() {
+    if (!this.data.loggedIn || !this.data.cloudAvailable || this.data.cloudLoading) return;
+    this.setData({ cloudLoading: true });
+    saveCloudState(getState())
+      .then(() => wx.showToast({ title: "云端备份成功", icon: "success" }))
+      .catch((error) => wx.showToast({ title: error.message || "备份失败", icon: "none" }))
+      .finally(() => this.setData({ cloudLoading: false }));
+  },
+
+  restoreCloud() {
+    if (!this.data.loggedIn || !this.data.cloudAvailable || this.data.cloudLoading) return;
+    this.setData({ cloudLoading: true });
+    fetchCloudState()
+      .then((result) => {
+        if (!result.state) {
+          wx.showToast({ title: "云端暂无备份", icon: "none" });
+          return;
+        }
+        wx.showModal({
+          title: "恢复云端数据",
+          content: "将使用云端持仓覆盖当前本地数据，是否继续？",
+          confirmText: "恢复",
+          success: (modal) => {
+            if (!modal.confirm) return;
+            saveState(normalizeState(result.state));
+            this.refreshStats();
+            wx.showToast({ title: "恢复成功", icon: "success" });
+          }
+        });
+      })
+      .catch((error) => wx.showToast({ title: error.message || "恢复失败", icon: "none" }))
+      .finally(() => this.setData({ cloudLoading: false }));
   },
 
   goEdit() {
