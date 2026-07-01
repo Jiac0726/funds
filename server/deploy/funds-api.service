@@ -1,0 +1,18 @@
+[Unit]
+Description=Funds Mini Program API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/funds/server
+EnvironmentFile=/opt/funds/server/.env
+ExecStart=/root/.nvm/versions/node/v22.22.2/bin/node /opt/funds/server/src/server.js
+Restart=on-failure
+RestartSec=5
+User=root
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
