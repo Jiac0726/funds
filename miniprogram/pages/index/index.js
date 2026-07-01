@@ -106,6 +106,7 @@ Page({
     return Promise.all([indexTask, fundTask])
       .then(([indexRaw, fundRaw]) => {
         const hasError = indexRaw && indexRaw.error || fundRaw && fundRaw.error;
+        const errorDetail = hasError && (hasError.errMsg || hasError.message || String(hasError));
         const quoteList = Array.isArray(fundRaw) ? fundRaw : [];
         const quoteByCode = quoteList.reduce((map, item) => {
           map[item.FCODE] = item;
@@ -135,7 +136,7 @@ Page({
               summary: summarize(calculatedFunds),
               lastUpdated: this.formatNow(),
               loading: false,
-              error: hasError ? "部分数据暂时不可用" : ""
+              error: hasError ? `部分数据暂时不可用：${errorDetail || "请求失败"}` : ""
             });
           });
       })

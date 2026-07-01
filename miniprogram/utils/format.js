@@ -15,10 +15,10 @@ function formatDecimal(value, digits = 2) {
 
 function formatMoney(value) {
   const num = toNumber(value);
-  return num.toLocaleString("zh-CN", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
+  const parts = num.toFixed(2).split(".");
+  const sign = parts[0].startsWith("-") ? "-" : "";
+  const integer = parts[0].replace("-", "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return `${sign}${integer}.${parts[1]}`;
 }
 
 function formatPercent(value) {
