@@ -1,4 +1,4 @@
-const { API_BASE_URL } = require("./config");
+const { API_BASE_URL, CLOUD_FUNCTION_API } = require("./config");
 const { getState } = require("./storage");
 
 const AUTH_TOKEN_KEY = "funds-mini-auth-token";
@@ -14,6 +14,31 @@ function setAuthToken(token) {
 
 function hasBackend() {
   return /^https?:\/\//.test(API_BASE_URL || "");
+}
+
+function hasCloudFunction() {
+  return !hasBackend() && !!(CLOUD_FUNCTION_API && typeof wx !== "undefined" && wx.cloud && wx.cloud.callFunction);
+}
+
+function callCloudFundApi(action, data = {}) {
+  if (!hasCloudFunction()) {
+    return Promise.reject(new Error("CloudBase function is not configured"));
+  }
+  return new Promise((resolve, reject) => {
+    wx.cloud.callFunction({
+      name: CLOUD_FUNCTION_API,
+      data: { action, ...data },
+      success(res) {
+        const result = res && res.result;
+        if (result && result.ok) {
+          resolve(result.data);
+        } else {
+          reject(new Error(result && result.error || "CloudBase function failed"));
+        }
+      },
+      fail: reject
+    });
+  });
 }
 
 function selectedDataSource() {
@@ -254,10 +279,18 @@ function uploadImage(path, filePath, formData = {}) {
 function fetchFundSearch(keyword) {
   const key = String(keyword || "").trim();
   if (!key) return Promise.resolve([]);
-  const url = hasBackend()
-    ? buildApiUrl("/api/funds/search", { key })
-    : `https://fundsuggest.eastmoney.com/FundSearch/api/FundSearchAPI.ashx?m=9&key=${encodeURIComponent(key)}&_=${Date.now()}`;
-  return request(url).then((data) => (data && data.Datas ? data.Datas : []));
+  const direct = () => {
+    const url = hasBackend()
+      ? buildApiUrl("/api/funds/search", { key })
+      : `https://fundsuggest.eastmoney.com/FundSearch/api/FundSearchAPI.ashx?m=9&key=${encodeURIComponent(key)}&_=${Date.now()}`;
+    return request(url).then((data) => (data && data.Datas ? data.Datas : []));
+  };
+  if (hasCloudFunction()) {
+    return callCloudFundApi("search", { keyword: key })
+      .then((data) => (data && data.Datas ? data.Datas : []))
+      .catch(direct);
+  }
+  return direct();
 }
 
 function fetchFundQuotes(codes) {
@@ -268,28 +301,44 @@ function fetchFundQuotes(codes) {
   if (!hasBackend() && source === "tushare") {
     return Promise.reject(new Error("当前数据源需要先配置后端域名"));
   }
-  if (!hasBackend() && source === "fundgz") {
-    return Promise.all(codeList.map((code) => fetchFundGzQuote(code).catch(() => null)))
-      .then((rows) => rows.filter(Boolean));
+  const direct = () => {
+    if (!hasBackend() && source === "fundgz") {
+      return Promise.all(codeList.map((code) => fetchFundGzQuote(code).catch(() => null)))
+        .then((rows) => rows.filter(Boolean));
+    }
+    const url = hasBackend()
+      ? buildApiUrl("/api/funds/quotes", { codes: list, source })
+      : `https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=200&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=mini-program&Fcodes=${list}&_=${Date.now()}`;
+    const quoteRequest = request(url)
+      .then((data) => (data && data.Datas ? data.Datas : []))
+      .then((rows) => (!hasBackend() && source === "eastmoney" ? supplementWithFundGzEstimates(codeList, rows) : rows));
+    if (!hasBackend() || source === "eastmoney") return quoteRequest;
+    return quoteRequest.catch(() => request(buildApiUrl("/api/funds/quotes", { codes: list, source: "eastmoney" }))
+      .then((data) => (data && data.Datas ? data.Datas : [])));
+  };
+  if (hasCloudFunction()) {
+    return callCloudFundApi("quotes", { codes: list, source })
+      .then((data) => (data && data.Datas ? data.Datas : []))
+      .catch(direct);
   }
-  const url = hasBackend()
-    ? buildApiUrl("/api/funds/quotes", { codes: list, source })
-    : `https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=200&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=mini-program&Fcodes=${list}&_=${Date.now()}`;
-  const quoteRequest = request(url)
-    .then((data) => (data && data.Datas ? data.Datas : []))
-    .then((rows) => (!hasBackend() && source === "eastmoney" ? supplementWithFundGzEstimates(codeList, rows) : rows));
-  if (!hasBackend() || source === "eastmoney") return quoteRequest;
-  return quoteRequest.catch(() => request(buildApiUrl("/api/funds/quotes", { codes: list, source: "eastmoney" }))
-    .then((data) => (data && data.Datas ? data.Datas : [])));
+  return direct();
 }
 
 function fetchIndexQuotes(secids) {
   const list = (secids || []).filter(Boolean).join(",");
   if (!list) return Promise.resolve([]);
-  const url = hasBackend()
-    ? buildApiUrl("/api/index/quotes", { secids: list })
-    : `https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&fields=f2,f3,f4,f12,f13,f14&secids=${list}&_=${Date.now()}`;
-  return request(url).then((data) => (data && data.data && data.data.diff ? data.data.diff : []));
+  const direct = () => {
+    const url = hasBackend()
+      ? buildApiUrl("/api/index/quotes", { secids: list })
+      : `https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&fields=f2,f3,f4,f12,f13,f14&secids=${list}&_=${Date.now()}`;
+    return request(url).then((data) => (data && data.data && data.data.diff ? data.data.diff : []));
+  };
+  if (hasCloudFunction()) {
+    return callCloudFundApi("indexQuotes", { secids: list })
+      .then((data) => (data && data.data && data.data.diff ? data.data.diff : []))
+      .catch(direct);
+  }
+  return direct();
 }
 
 function fetchFundNetHistory(code, range = "y") {
@@ -298,37 +347,61 @@ function fetchFundNetHistory(code, range = "y") {
   if (!hasBackend() && source === "tushare") {
     return Promise.reject(new Error("当前数据源需要先配置后端域名"));
   }
-  const url = hasBackend()
-    ? buildApiUrl(`/api/funds/${code}/net-history`, { range, source })
-    : `https://fundmobapi.eastmoney.com/FundMApi/FundNetDiagram.ashx?FCODE=${code}&RANGE=${range}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&_=${Date.now()}`;
-  const historyRequest = request(url).then((data) => (data && data.Datas ? data.Datas : []));
-  if (!hasBackend() || source === "eastmoney") return historyRequest;
-  return historyRequest.catch(() => request(buildApiUrl(`/api/funds/${code}/net-history`, { range, source: "eastmoney" }))
-    .then((data) => (data && data.Datas ? data.Datas : [])));
+  const direct = () => {
+    const url = hasBackend()
+      ? buildApiUrl(`/api/funds/${code}/net-history`, { range, source })
+      : `https://fundmobapi.eastmoney.com/FundMApi/FundNetDiagram.ashx?FCODE=${code}&RANGE=${range}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&_=${Date.now()}`;
+    const historyRequest = request(url).then((data) => (data && data.Datas ? data.Datas : []));
+    if (!hasBackend() || source === "eastmoney") return historyRequest;
+    return historyRequest.catch(() => request(buildApiUrl(`/api/funds/${code}/net-history`, { range, source: "eastmoney" }))
+      .then((data) => (data && data.Datas ? data.Datas : [])));
+  };
+  if (hasCloudFunction()) {
+    return callCloudFundApi("netHistory", { code, range, source })
+      .then((data) => (data && data.Datas ? data.Datas : []))
+      .catch(direct);
+  }
+  return direct();
 }
 
 function fetchFundBaseInfo(code) {
   if (!code) return Promise.resolve({});
-  const url = hasBackend()
-    ? buildApiUrl(`/api/funds/${code}/base-info`)
-    : `https://fundmobapi.eastmoney.com/FundMApi/FundBaseTypeInformation.ashx?FCODE=${code}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&_=${Date.now()}`;
-  return request(url).then((data) => (data && data.Datas ? data.Datas : {}));
+  const direct = () => {
+    const url = hasBackend()
+      ? buildApiUrl(`/api/funds/${code}/base-info`)
+      : `https://fundmobapi.eastmoney.com/FundMApi/FundBaseTypeInformation.ashx?FCODE=${code}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&_=${Date.now()}`;
+    return request(url).then((data) => (data && data.Datas ? data.Datas : {}));
+  };
+  if (hasCloudFunction()) {
+    return callCloudFundApi("baseInfo", { code })
+      .then((data) => (data && data.Datas ? data.Datas : {}))
+      .catch(direct);
+  }
+  return direct();
 }
 
 function fetchFundPositions(code) {
   if (!code) return Promise.resolve({ ok: true, expansion: "", totalStockRatio: 0, stockPositions: [] });
-  if (hasBackend()) {
-    return request(buildApiUrl(`/api/funds/${code}/positions`)).then((data) => normalizeFundPositionData(data));
+  const direct = () => {
+    if (hasBackend()) {
+      return request(buildApiUrl(`/api/funds/${code}/positions`)).then((data) => normalizeFundPositionData(data));
+    }
+    const url = `https://fundmobapi.eastmoney.com/FundMNewApi/FundMNInverstPosition?FCODE=${code}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&Uid=&_=${Date.now()}`;
+    return request(url).then((data) => {
+      const base = normalizeFundPositionData(data);
+      const secids = base.stockPositions.map((item) => item.secid).filter(Boolean);
+      if (!secids.length) return base;
+      return fetchStockQuotes(secids)
+        .then((stockQuotes) => normalizeFundPositionData(data, stockQuotes))
+        .catch(() => base);
+    });
+  };
+  if (hasCloudFunction()) {
+    return callCloudFundApi("positions", { code })
+      .then((data) => normalizeFundPositionData(data))
+      .catch(direct);
   }
-  const url = `https://fundmobapi.eastmoney.com/FundMNewApi/FundMNInverstPosition?FCODE=${code}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&Uid=&_=${Date.now()}`;
-  return request(url).then((data) => {
-    const base = normalizeFundPositionData(data);
-    const secids = base.stockPositions.map((item) => item.secid).filter(Boolean);
-    if (!secids.length) return base;
-    return fetchStockQuotes(secids)
-      .then((stockQuotes) => normalizeFundPositionData(data, stockQuotes))
-      .catch(() => base);
-  });
+  return direct();
 }
 
 function fetchAuthStatus() {
@@ -409,6 +482,8 @@ module.exports = {
   uploadImage,
   buildApiUrl,
   hasBackend,
+  hasCloudFunction,
+  callCloudFundApi,
   parseFundGzPayload,
   mergeFundGzQuoteRows,
   getAuthToken,
