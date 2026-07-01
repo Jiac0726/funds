@@ -6,10 +6,8 @@
       <view class="sub">{{authStatusText}}</view>
       <view class="version">小程序端 v{{version}}</view>
     </view>
-    <button wx:if="{{!loggedIn}}" class="wechat-button" bindtap="loginWechat" loading="{{authLoading}}" disabled="{{!authAvailable}}">
-      {{authAvailable ? '微信登录' : '未配置'}}
-    </button>
-    <button wx:else class="logout-button" bindtap="logoutWechat" loading="{{authLoading}}">退出</button>
+    <button wx:if="{{!cloudAvailable}}" class="wechat-button" bindtap="loginWechat" disabled="{{true}}">本地模式</button>
+    <button wx:else class="logout-button" bindtap="loginWechat">已连接</button>
   </view>
 
   <view class="stats card">
@@ -28,11 +26,11 @@
         <text class="menu-value">{{currentSourceLabel}} ›</text>
       </view>
     </picker>
-    <view wx:if="{{loggedIn && cloudAvailable}}" class="menu-item" bindtap="backupCloud">
+    <view wx:if="{{cloudAvailable}}" class="menu-item" bindtap="backupCloud">
       <text>备份到腾讯云</text>
       <text class="menu-value">{{cloudLoading ? '处理中' : '上传当前数据'}}</text>
     </view>
-    <view wx:if="{{loggedIn && cloudAvailable}}" class="menu-item" bindtap="restoreCloud">
+    <view wx:if="{{cloudAvailable}}" class="menu-item" bindtap="restoreCloud">
       <text>从腾讯云恢复</text>
       <text class="menu-value">覆盖本地数据</text>
     </view>
@@ -63,7 +61,7 @@
 
     <view class="menu-item muted">
       <text>存储方式</text>
-      <text>{{cloudAvailable ? '本机缓存 + 腾讯云 COS' : '本机小程序缓存'}}</text>
+      <text>{{cloudAvailable ? '本机缓存 + 腾讯云云数据库' : '本机小程序缓存'}}</text>
     </view>
   </view>
 </view>

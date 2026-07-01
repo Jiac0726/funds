@@ -106,3 +106,6 @@ dist-zip
 dev.md
 src/popup/App copy.vue
 .DS_Store
+# Local AI skill installs
+.agents/
+skills-lock.json

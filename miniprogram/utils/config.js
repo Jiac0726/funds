@@ -1,7 +1,11 @@
-// 正式上线时改成你自己的后端域名，例如："https://api.example.com"
-// 保持为空字符串时，小程序会继续直连东方财富公开接口，方便本地开发调试。
-const API_BASE_URL = "https://gskj.cloud/funds-api";
+// Keep empty for local and real-device debugging before the custom backend domain is ICP-ready.
+// When the backend domain is ready, set this to something like "https://api.example.com/funds-api".
+const API_BASE_URL = "";
+const CLOUD_ENV_ID = "bgdb-1g0pwgmg56054bef";
+const CLOUD_STATE_COLLECTION = "fund_user_states";
 
 module.exports = {
-  API_BASE_URL
+  API_BASE_URL,
+  CLOUD_ENV_ID,
+  CLOUD_STATE_COLLECTION
 };

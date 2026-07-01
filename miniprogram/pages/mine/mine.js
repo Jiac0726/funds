@@ -6,14 +6,13 @@ const {
   setDataSource
 } = require("../../utils/storage");
 const {
-  fetchDataSources,
-  fetchAuthStatus,
-  fetchCurrentUser,
-  wechatLogin,
-  wechatLogout,
-  fetchCloudState,
-  saveCloudState
+  fetchDataSources
 } = require("../../utils/api");
+const {
+  isCloudAvailable,
+  fetchCloudStateDirect,
+  saveCloudStateDirect
+} = require("../../utils/cloud-store");
 
 const FALLBACK_SOURCES = [
   { id: "eastmoney", label: "东方财富", available: true, supportsEstimate: true },
@@ -41,7 +40,7 @@ Page({
     cloudLoading: false,
     loggedIn: false,
     userId: "",
-    authStatusText: "未登录"
+    authStatusText: "本机模式"
   },
 
   onShow() {
@@ -99,89 +98,42 @@ Page({
   },
 
   loadAuth() {
-    this.setData({ authLoading: true });
-    fetchAuthStatus()
-      .then((status) => {
-        const available = !!(status && status.available);
-        this.setData({ cloudAvailable: !!(status && status.storageAvailable) });
-        if (!available) {
-          this.setData({
-            authAvailable: false,
-            authLoading: false,
-            loggedIn: false,
-            userId: "",
-            authStatusText: "服务器未配置微信登录"
-          });
-          return null;
-        }
-        this.setData({ authAvailable: true });
-        return fetchCurrentUser();
-      })
-      .then((user) => {
-        if (!this.data.authAvailable) return;
-        this.setData({
-          authLoading: false,
-          loggedIn: !!user,
-          userId: user && user.id || "",
-          authStatusText: user ? "微信用户 " + user.id : "未登录"
-        });
-      })
-      .catch(() => {
-        this.setData({
-          authLoading: false,
-          loggedIn: false,
-          userId: "",
-          authStatusText: "登录状态已失效"
-        });
-      });
-  },
-
-  loginWechat() {
-    if (!this.data.authAvailable || this.data.authLoading) return;
-    this.setData({ authLoading: true, authStatusText: "正在微信授权" });
-    wechatLogin()
-      .then((user) => {
-        this.setData({
-          authLoading: false,
-          loggedIn: true,
-          userId: user.id,
-          authStatusText: "微信用户 " + user.id
-        });
-        wx.showToast({ title: "登录成功", icon: "success" });
-      })
-      .catch((error) => {
-        this.setData({ authLoading: false, authStatusText: "登录失败" });
-        wx.showToast({ title: error.message || "登录失败", icon: "none" });
-      });
-  },
-
-  logoutWechat() {
-    if (this.data.authLoading) return;
-    this.setData({ authLoading: true });
-    wechatLogout().then(() => {
-      this.setData({
-        authLoading: false,
-        loggedIn: false,
-        userId: "",
-        authStatusText: "未登录"
-      });
-      wx.showToast({ title: "已退出", icon: "none" });
+    const cloudAvailable = isCloudAvailable();
+    this.setData({
+      authAvailable: cloudAvailable,
+      cloudAvailable,
+      authLoading: false,
+      loggedIn: cloudAvailable,
+      userId: cloudAvailable ? "CloudBase" : "",
+      authStatusText: cloudAvailable ? "微信云开发已连接" : "未配置云开发环境"
     });
   },
 
+  loginWechat() {
+    if (!this.data.cloudAvailable) {
+      wx.showToast({ title: "未配置云开发环境", icon: "none" });
+      return;
+    }
+    wx.showToast({ title: "云开发已自动连接", icon: "none" });
+  },
+
+  logoutWechat() {
+    wx.showToast({ title: "云开发身份由微信自动管理", icon: "none" });
+  },
+
   backupCloud() {
-    if (!this.data.loggedIn || !this.data.cloudAvailable || this.data.cloudLoading) return;
+    if (!this.data.cloudAvailable || this.data.cloudLoading) return;
     this.setData({ cloudLoading: true });
-    saveCloudState(getState())
+    saveCloudStateDirect(getState())
       .then(() => wx.showToast({ title: "云端备份成功", icon: "success" }))
       .catch((error) => wx.showToast({ title: error.message || "备份失败", icon: "none" }))
       .finally(() => this.setData({ cloudLoading: false }));
   },
 
   restoreCloud() {
-    if (!this.data.loggedIn || !this.data.cloudAvailable || this.data.cloudLoading) return;
+    if (!this.data.cloudAvailable || this.data.cloudLoading) return;
     this.setData({ cloudLoading: true });
-    fetchCloudState()
+    fetchCloudStateDirect()
       .then((result) => {
         if (!result.state) {
           wx.showToast({ title: "云端暂无备份", icon: "none" });
