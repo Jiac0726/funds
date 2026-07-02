@@ -46,6 +46,14 @@
       <text>支付宝截图导入</text>
       <text class="menu-value">AI识别持仓</text>
     </view>
+    <view class="menu-item" bindtap="openLegal" data-type="privacy">
+      <text>隐私政策</text>
+      <text class="arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="openLegal" data-type="risk">
+      <text>风险提示与数据说明</text>
+      <text class="arrow">›</text>
+    </view>
     <view class="menu-item danger" bindtap="resetConfig">
       <text>恢复默认配置</text>
       <text class="arrow">›</text>
@@ -56,6 +64,10 @@
   <view class="menu card">
     <view class="menu-item" bindtap="goHome">
       <text>返回首页</text>
+      <text class="arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="openLegal" data-type="agreement">
+      <text>用户协议</text>
       <text class="arrow">›</text>
     </view>
 

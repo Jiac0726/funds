@@ -2,6 +2,9 @@
   <view wx:if="{{!hasBackend}}" class="notice">
     截图导入需要先在 utils/config.js 配置 API_BASE_URL，并在后端配置视觉/OCR 引擎。当前可先继续使用手动搜索添加。
   </view>
+  <view class="notice">
+    截图仅用于识别持仓表单，请确认识别结果后再导入。不要上传身份证、银行卡、手机号等与基金持仓无关的信息。
+  </view>
 
   <view class="card panel">
     <view class="panel-head">

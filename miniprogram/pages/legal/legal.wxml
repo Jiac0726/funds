@@ -1,0 +1,54 @@
+<view class="page">
+  <view class="card doc-card">
+    <view class="doc-title">{{title}}</view>
+    <view class="doc-updated">更新日期：2026-07-02</view>
+
+    <block wx:if="{{type === 'privacy'}}">
+      <view class="section">
+        <view class="section-title-text">信息收集与使用</view>
+        <view class="paragraph">基基棒用于个人基金持仓记录、行情展示和截图导入。小程序会在本机缓存基金代码、名称、份额、成本、导入日期和用户手动填写的数据。</view>
+        <view class="paragraph">启用腾讯云备份时，以上持仓配置会保存到云开发数据库，并与微信小程序自动分配的用户标识关联，用于同一用户的数据恢复。</view>
+      </view>
+      <view class="section">
+        <view class="section-title-text">截图与 OCR</view>
+        <view class="paragraph">用户主动选择支付宝基金截图后，小程序仅将图片用于识别基金名称、代码、金额、份额和成本等表单字段。请避免上传身份证、银行卡、手机号等与持仓无关的敏感信息。</view>
+        <view class="paragraph">如后端接入第三方 OCR 或 AI 服务，图片和识别文本可能会被临时传输给对应服务完成解析，处理结果以用户确认后的表单为准。</view>
+      </view>
+      <view class="section">
+        <view class="section-title-text">用户控制</view>
+        <view class="paragraph">用户可以在“我的”页面导出、导入、恢复默认配置，也可以清空本地持仓数据。云端备份仅在用户点击“备份到腾讯云”时写入。</view>
+      </view>
+    </block>
+
+    <block wx:elif="{{type === 'risk'}}">
+      <view class="section">
+        <view class="section-title-text">产品定位</view>
+        <view class="paragraph">基基棒是个人持仓记录和数据展示工具，不提供基金销售、开户、交易、组合管理、自动调仓或个性化投资顾问服务。</view>
+      </view>
+      <view class="section">
+        <view class="section-title-text">投资风险</view>
+        <view class="paragraph">本工具展示的基金净值、估值、收益和持仓回算结果仅供记录与参考，不构成任何投资建议、收益承诺或买卖依据。</view>
+        <view class="paragraph">基金有风险，投资需谨慎。过往业绩不预示未来表现，实际收益以基金公司、销售平台及用户真实交易记录为准。</view>
+      </view>
+      <view class="section">
+        <view class="section-title-text">数据说明</view>
+        <view class="paragraph">盘中估值为第三方公开数据源提供的估算值，可能延迟、缺失或与最终净值存在偏差。小程序会尽量展示数据状态，遇到不可用时显示为空或提示。</view>
+      </view>
+    </block>
+
+    <block wx:else>
+      <view class="section">
+        <view class="section-title-text">服务内容</view>
+        <view class="paragraph">基基棒提供基金自选管理、持仓成本记录、收益回算、公开行情查看、支付宝基金截图识别导入和配置备份恢复等工具能力。</view>
+      </view>
+      <view class="section">
+        <view class="section-title-text">用户责任</view>
+        <view class="paragraph">用户应自行确认导入表单中的基金代码、份额、成本、金额和日期等信息。因手动填写、截图识别或第三方数据延迟导致的偏差，由用户自行核对。</view>
+      </view>
+      <view class="section">
+        <view class="section-title-text">服务限制</view>
+        <view class="paragraph">本小程序不承诺行情数据实时、完整或绝对准确，也不承担因网络、数据源、云服务或终端环境异常导致的展示差异。</view>
+      </view>
+    </block>
+  </view>
+</view>

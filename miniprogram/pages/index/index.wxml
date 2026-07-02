@@ -41,6 +41,7 @@
   </view>
 
   <view wx:if="{{error}}" class="notice">{{error}}</view>
+  <view class="notice">数据仅供记录与参考，不构成投资建议；基金有风险，投资需谨慎。</view>
 
   <view class="section-title">指数行情</view>
   <scroll-view scroll-x class="index-scroll">

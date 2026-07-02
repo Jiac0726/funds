@@ -167,6 +167,11 @@ Page({
     wx.switchTab({ url: "/pages/index/index" });
   },
 
+  openLegal(event) {
+    const type = event.currentTarget.dataset.type || "agreement";
+    wx.navigateTo({ url: `/pages/legal/legal?type=${type}` });
+  },
+
   exportConfig() {
     const payload = {
       app: "funds-mini",

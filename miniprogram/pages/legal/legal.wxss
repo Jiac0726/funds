@@ -1,0 +1,33 @@
+.doc-card {
+  padding: 30rpx;
+}
+
+.doc-title {
+  color: #18212b;
+  font-size: 38rpx;
+  font-weight: 800;
+}
+
+.doc-updated {
+  margin-top: 10rpx;
+  color: #8a96a3;
+  font-size: 24rpx;
+}
+
+.section {
+  margin-top: 34rpx;
+}
+
+.section-title-text {
+  margin-bottom: 14rpx;
+  color: #27313c;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.paragraph {
+  margin-top: 12rpx;
+  color: #5c6875;
+  font-size: 27rpx;
+  line-height: 1.75;
+}

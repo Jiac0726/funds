@@ -4,6 +4,7 @@
                   "pages/history/history",
                   "pages/mine/mine",
                   "pages/import/import",
+                  "pages/legal/legal",
                   "pages/edit/edit",
                   "pages/detail/detail",
                   "pages/transactions/transactions"
