@@ -1,5 +1,5 @@
 {
-  "description": "基基棒小程序端",
+  "description": "骰子日记小程序端",
   "compileType": "miniprogram",
   "miniprogramRoot": "./",
   "appid": "touristappid",

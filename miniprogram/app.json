@@ -10,7 +10,7 @@
                   "pages/transactions/transactions"
               ],
     "window":  {
-                   "navigationBarTitleText":  "基基棒",
+                   "navigationBarTitleText":  "骰子日记",
                    "navigationBarBackgroundColor":  "#ffffff",
                    "navigationBarTextStyle":  "black",
                    "backgroundColor":  "#f6f7f9",

@@ -6,7 +6,7 @@
     <block wx:if="{{type === 'privacy'}}">
       <view class="section">
         <view class="section-title-text">信息收集与使用</view>
-        <view class="paragraph">基基棒用于个人基金持仓记录、行情展示和截图导入。小程序会在本机缓存基金代码、名称、份额、成本、导入日期和用户手动填写的数据。</view>
+        <view class="paragraph">骰子日记用于个人基金持仓记录、行情展示和截图导入。小程序会在本机缓存基金代码、名称、份额、成本、导入日期和用户手动填写的数据。</view>
         <view class="paragraph">启用腾讯云备份时，以上持仓配置会保存到云开发数据库，并与微信小程序自动分配的用户标识关联，用于同一用户的数据恢复。</view>
       </view>
       <view class="section">
@@ -23,7 +23,7 @@
     <block wx:elif="{{type === 'risk'}}">
       <view class="section">
         <view class="section-title-text">产品定位</view>
-        <view class="paragraph">基基棒是个人持仓记录和数据展示工具，不提供基金销售、开户、交易、组合管理、自动调仓或个性化投资顾问服务。</view>
+        <view class="paragraph">骰子日记是个人持仓记录和数据展示工具，不提供基金销售、开户、交易、组合管理、自动调仓或个性化投资顾问服务。</view>
       </view>
       <view class="section">
         <view class="section-title-text">投资风险</view>
@@ -39,7 +39,7 @@
     <block wx:else>
       <view class="section">
         <view class="section-title-text">服务内容</view>
-        <view class="paragraph">基基棒提供基金自选管理、持仓成本记录、收益回算、公开行情查看、支付宝基金截图识别导入和配置备份恢复等工具能力。</view>
+        <view class="paragraph">骰子日记提供基金自选管理、持仓成本记录、收益回算、公开行情查看、支付宝基金截图识别导入和配置备份恢复等工具能力。</view>
       </view>
       <view class="section">
         <view class="section-title-text">用户责任</view>
