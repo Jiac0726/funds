@@ -1,9 +1,9 @@
 {
-  "description": "自选基金助手小程序端",
+  "description": "基基棒小程序端",
   "compileType": "miniprogram",
   "miniprogramRoot": "./",
   "appid": "touristappid",
-  "projectname": "funds-miniprogram",
+  "projectname": "jijibang-miniprogram",
   "setting": {
     "urlCheck": false,
     "es6": true,

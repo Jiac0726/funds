@@ -9,7 +9,7 @@
                   "pages/transactions/transactions"
               ],
     "window":  {
-                   "navigationBarTitleText":  "自选基金助手",
+                   "navigationBarTitleText":  "基基棒",
                    "navigationBarBackgroundColor":  "#ffffff",
                    "navigationBarTextStyle":  "black",
                    "backgroundColor":  "#f6f7f9",

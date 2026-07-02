@@ -2,7 +2,7 @@
   <view class="profile card">
     <view class="avatar">{{loggedIn ? '微' : '基'}}</view>
     <view class="profile-copy">
-      <view class="title">自选基金助手</view>
+      <view class="title">基基棒</view>
       <view class="sub">{{authStatusText}}</view>
       <view class="version">小程序端 v{{version}}</view>
     </view>

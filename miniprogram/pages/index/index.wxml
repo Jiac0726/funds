@@ -2,7 +2,7 @@
   <view class="summary card">
     <view class="summary-head">
       <view>
-        <view class="summary-title">自选基金助手</view>
+        <view class="summary-title">基基棒</view>
         <view class="summary-sub"><text class="live-dot"></text> 自动更新 {{autoRefreshSeconds}}秒 · {{lastUpdated}}</view>
       </view>
       <button class="ghost-button" bindtap="refresh" loading="{{loading}}">刷新</button>
