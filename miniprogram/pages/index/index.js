@@ -12,6 +12,13 @@ const SORT_OPTIONS = [
   { key: "amount_desc", label: "金额" }
 ];
 
+const MARKET_MODULES = [
+  { key: "overview", label: "总览" },
+  { key: "funds", label: "自选基金" },
+  { key: "index", label: "指数行情" },
+  { key: "watch", label: "异动观察" }
+];
+
 function fallbackFund(holding) {
   const item = normalizeFund(
     {
@@ -46,12 +53,88 @@ function sortFunds(funds, sortKey) {
   }
 }
 
+function moduleSummary(summary, funds, indexList) {
+  const unavailable = funds.filter((item) => item.hasDayGain === false).length;
+  const estimated = funds.filter((item) => item.isEstimated).length;
+  const strongestFund = [...funds]
+    .filter((item) => item.hasDayGain)
+    .sort((a, b) => toNumber(b.gszzl) - toNumber(a.gszzl))[0];
+  const weakestFund = [...funds]
+    .filter((item) => item.hasDayGain)
+    .sort((a, b) => toNumber(a.gszzl) - toNumber(b.gszzl))[0];
+  const strongestIndex = [...indexList]
+    .sort((a, b) => toNumber(String(b.rate).replace("%", "")) - toNumber(String(a.rate).replace("%", "")))[0];
+  return [
+    {
+      key: "asset",
+      title: "持仓资产",
+      value: summary.totalAmount,
+      sub: `${funds.length} 只基金`,
+      valueClass: "flat"
+    },
+    {
+      key: "gain",
+      title: summary.dayGainLabel,
+      value: summary.totalDayGain,
+      sub: `日收益率 ${summary.dayRate}`,
+      valueClass: summary.totalDayGainClass
+    },
+    {
+      key: "estimate",
+      title: "盘中估值",
+      value: `${estimated} / ${funds.length}`,
+      sub: unavailable ? `${unavailable} 只等待估值` : "估值状态正常",
+      valueClass: unavailable ? "flat" : "up"
+    },
+    {
+      key: "index",
+      title: "指数领涨",
+      value: strongestIndex ? strongestIndex.rate : "--",
+      sub: strongestIndex ? strongestIndex.name : "暂无指数数据",
+      valueClass: strongestIndex ? strongestIndex.valueClass : "flat"
+    },
+    {
+      key: "strong",
+      title: "持仓领涨",
+      value: strongestFund ? strongestFund.gszzlText : "--",
+      sub: strongestFund ? strongestFund.name : "暂无可用估值",
+      valueClass: strongestFund ? strongestFund.valueClass : "flat"
+    },
+    {
+      key: "weak",
+      title: "持仓领跌",
+      value: weakestFund ? weakestFund.gszzlText : "--",
+      sub: weakestFund ? weakestFund.name : "暂无可用估值",
+      valueClass: weakestFund ? weakestFund.valueClass : "flat"
+    }
+  ];
+}
+
+function watchList(funds) {
+  const sorted = [...funds]
+    .filter((item) => item.hasDayGain || item.hasCostGain)
+    .sort((a, b) => Math.abs(toNumber(b.dayGainValue)) - Math.abs(toNumber(a.dayGainValue)));
+  return sorted.slice(0, 5).map((item) => ({
+    code: item.code,
+    name: item.name,
+    rate: item.gszzlText,
+    dayGain: item.dayGain,
+    costGain: item.costGain,
+    status: item.quoteStatusText || "行情正常",
+    valueClass: item.dayGainClass
+  }));
+}
+
 Page({
   data: {
     loading: false,
     funds: [],
     indexList: [],
     summary: summarize([]),
+    marketModules: MARKET_MODULES,
+    activeModule: "overview",
+    moduleCards: [],
+    watchItems: [],
     lastUpdated: "--",
     autoRefreshSeconds: AUTO_REFRESH_MS / 1000,
     error: "",
@@ -130,10 +213,13 @@ Page({
         return Promise.all(funds.map((fund) => fund.hasDayGain ? Promise.resolve([]) : fetchFundNetHistory(fund.code, "3y").catch(() => [])))
           .then((historyRows) => {
             const calculatedFunds = funds.map((fund, index) => applyHistoryFallback(fund, historyRows[index]));
+            const summary = summarize(calculatedFunds);
             this.setData({
               funds: sortFunds(calculatedFunds, sortKey),
               indexList,
-              summary: summarize(calculatedFunds),
+              summary,
+              moduleCards: moduleSummary(summary, calculatedFunds, indexList),
+              watchItems: watchList(calculatedFunds),
               lastUpdated: this.formatNow(),
               loading: false,
               error: hasError ? `部分数据暂时不可用：${errorDetail || "请求失败"}` : ""
@@ -149,6 +235,11 @@ Page({
     const sortKey = event.currentTarget.dataset.key || "default";
     setSortKey(sortKey);
     this.setData({ sortKey, funds: sortFunds(this.data.funds, sortKey) });
+  },
+
+  changeModule(event) {
+    const key = event.currentTarget.dataset.key || "overview";
+    this.setData({ activeModule: key });
   },
 
   formatNow() {

@@ -99,15 +99,75 @@
 }
 
 .index-scroll,
-.sort-scroll {
+.sort-scroll,
+.module-scroll {
   white-space: nowrap;
 }
 
 .index-row,
-.sort-row {
+.sort-row,
+.module-row {
   display: inline-flex;
   gap: 16rpx;
   padding-bottom: 2rpx;
+}
+
+.module-scroll {
+  margin: 20rpx 0 10rpx;
+}
+
+.module-chip {
+  min-width: 136rpx;
+  padding: 16rpx 24rpx;
+  border-radius: 8rpx;
+  color: #5f6b78;
+  background: #ffffff;
+  border: 1rpx solid #e5ebf2;
+  box-sizing: border-box;
+  font-size: 26rpx;
+  text-align: center;
+}
+
+.module-chip.active {
+  color: #ffffff;
+  background: #276ef1;
+  border-color: #276ef1;
+  font-weight: 700;
+}
+
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16rpx;
+}
+
+.module-card {
+  min-height: 156rpx;
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+
+.module-card-title {
+  color: #758290;
+  font-size: 24rpx;
+}
+
+.module-card-value {
+  display: block;
+  margin-top: 12rpx;
+  font-size: 34rpx;
+  line-height: 1.15;
+  font-weight: 800;
+  word-break: break-all;
+}
+
+.module-card-sub {
+  margin-top: 8rpx;
+  color: #8a96a3;
+  font-size: 22rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .index-card {
@@ -155,6 +215,47 @@
 .fund-card {
   padding: 24rpx;
   margin-bottom: 18rpx;
+}
+
+.watch-card {
+  padding: 22rpx;
+  margin-bottom: 16rpx;
+}
+
+.watch-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18rpx;
+}
+
+.watch-name {
+  max-width: 500rpx;
+  color: #1f2730;
+  font-size: 29rpx;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.watch-rate {
+  font-size: 32rpx;
+  font-weight: 800;
+}
+
+.watch-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20rpx;
+  margin-top: 20rpx;
+  font-size: 27rpx;
+}
+
+.watch-status {
+  margin-top: 18rpx;
+  color: #8793a0;
+  font-size: 23rpx;
 }
 
 .fund-main,

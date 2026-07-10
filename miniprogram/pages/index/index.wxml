@@ -43,74 +43,122 @@
   <view wx:if="{{error}}" class="notice">{{error}}</view>
   <view class="notice">数据仅供记录与参考，不构成投资建议；基金有风险，投资需谨慎。</view>
 
-  <view class="section-title">指数行情</view>
-  <scroll-view scroll-x class="index-scroll">
-    <view class="index-row">
-      <view wx:for="{{indexList}}" wx:key="code" class="index-card card">
-        <view class="index-name">{{item.name}}</view>
-        <view class="index-price {{item.valueClass}}">{{item.price}}</view>
-        <view class="index-change {{item.valueClass}}">{{item.change}} {{item.rate}}</view>
-      </view>
-    </view>
-  </scroll-view>
-
-  <view class="section-title">
-    <text>自选基金</text>
-    <button class="primary-button" bindtap="goEdit">管理</button>
-  </view>
-
-  <scroll-view wx:if="{{funds.length > 1}}" scroll-x class="sort-scroll">
-    <view class="sort-row">
-      <view wx:for="{{sortOptions}}" wx:key="key" class="sort-chip {{sortKey === item.key ? 'active' : ''}}" bindtap="changeSort" data-key="{{item.key}}">
+  <scroll-view scroll-x class="module-scroll">
+    <view class="module-row">
+      <view wx:for="{{marketModules}}" wx:key="key" class="module-chip {{activeModule === item.key ? 'active' : ''}}" bindtap="changeModule" data-key="{{item.key}}">
         {{item.label}}
       </view>
     </view>
   </scroll-view>
 
-  <view wx:if="{{funds.length === 0}}" class="card empty">
-    <view>还没有自选基金</view>
-    <button class="primary-button empty-action" bindtap="goEdit">添加自选</button>
-  </view>
-
-  <view wx:for="{{funds}}" wx:key="fundcode" class="fund-card card" bindtap="openDetail" data-code="{{item.fundcode}}">
-    <view class="fund-main">
-      <view>
-        <view class="fund-name">{{item.name}}</view>
-        <view class="fund-code">{{item.fundcode}}</view>
-      </view>
-      <view class="fund-rate {{item.valueClass}}">{{item.gszzlText}}</view>
-    </view>
-
-    <view class="fund-grid">
-      <view>
-        <text class="label">{{item.currentNavLabel}}</text>
-        <text>{{item.currentNav}}</text>
-      </view>
-      <view>
-        <text class="label">单位净值</text>
-        <text>{{item.dwjz}}</text>
-      </view>
-      <view>
-        <text class="label">{{item.amountLabel}}</text>
-        <text>{{item.amount}}</text>
-      </view>
-      <view>
-        <text class="label">{{item.dayGainLabel}}</text>
-        <text class="{{item.dayGainClass}}">{{item.dayGain}}</text>
-      </view>
-      <view>
-        <text class="label">{{item.costGainLabel}}</text>
-        <text class="{{item.costGainClass}}">{{item.costGain}}</text>
-      </view>
-      <view>
-        <text class="label">持有收益率</text>
-        <text class="{{item.costGainClass}}">{{item.costRate}}</text>
+  <block wx:if="{{activeModule === 'overview'}}">
+    <view class="section-title">多模块行情追踪</view>
+    <view class="module-grid">
+      <view wx:for="{{moduleCards}}" wx:key="key" class="module-card card">
+        <view class="module-card-title">{{item.title}}</view>
+        <view class="module-card-value {{item.valueClass}}">{{item.value}}</view>
+        <view class="module-card-sub">{{item.sub}}</view>
       </view>
     </view>
+  </block>
 
-    <view class="fund-foot">
-      <text>份额 {{item.numText}}</text>
-      <text>更新 {{item.updateText}}</text>
+  <block wx:if="{{activeModule === 'overview' || activeModule === 'index'}}">
+    <view class="section-title">指数行情</view>
+    <scroll-view scroll-x class="index-scroll">
+      <view class="index-row">
+        <view wx:for="{{indexList}}" wx:key="code" class="index-card card">
+          <view class="index-name">{{item.name}}</view>
+          <view class="index-price {{item.valueClass}}">{{item.price}}</view>
+          <view class="index-change {{item.valueClass}}">{{item.change}} {{item.rate}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </block>
+
+  <block wx:if="{{activeModule === 'overview' || activeModule === 'watch'}}">
+    <view class="section-title">异动观察</view>
+    <view wx:if="{{watchItems.length === 0}}" class="card empty">暂无可观察行情</view>
+    <view wx:for="{{watchItems}}" wx:key="code" class="watch-card card" bindtap="openDetail" data-code="{{item.code}}">
+      <view class="watch-main">
+        <view>
+          <view class="watch-name">{{item.name}}</view>
+          <view class="fund-code">{{item.code}}</view>
+        </view>
+        <view class="watch-rate {{item.valueClass}}">{{item.rate}}</view>
+      </view>
+      <view class="watch-grid">
+        <view>
+          <text class="label">日收益</text>
+          <text class="{{item.valueClass}}">{{item.dayGain}}</text>
+        </view>
+        <view>
+          <text class="label">持有收益</text>
+          <text>{{item.costGain}}</text>
+        </view>
+      </view>
+      <view class="watch-status">{{item.status}}</view>
     </view>
-  </view>
+  </block>
+
+  <block wx:if="{{activeModule === 'overview' || activeModule === 'funds'}}">
+    <view class="section-title">
+      <text>自选基金</text>
+      <button class="primary-button" bindtap="goEdit">管理</button>
+    </view>
+
+    <scroll-view wx:if="{{funds.length > 1}}" scroll-x class="sort-scroll">
+      <view class="sort-row">
+        <view wx:for="{{sortOptions}}" wx:key="key" class="sort-chip {{sortKey === item.key ? 'active' : ''}}" bindtap="changeSort" data-key="{{item.key}}">
+          {{item.label}}
+        </view>
+      </view>
+    </scroll-view>
+
+    <view wx:if="{{funds.length === 0}}" class="card empty">
+      <view>还没有自选基金</view>
+      <button class="primary-button empty-action" bindtap="goEdit">添加自选</button>
+    </view>
+
+    <view wx:for="{{funds}}" wx:key="fundcode" class="fund-card card" bindtap="openDetail" data-code="{{item.fundcode}}">
+      <view class="fund-main">
+        <view>
+          <view class="fund-name">{{item.name}}</view>
+          <view class="fund-code">{{item.fundcode}}</view>
+        </view>
+        <view class="fund-rate {{item.valueClass}}">{{item.gszzlText}}</view>
+      </view>
+
+      <view class="fund-grid">
+        <view>
+          <text class="label">{{item.currentNavLabel}}</text>
+          <text>{{item.currentNav}}</text>
+        </view>
+        <view>
+          <text class="label">单位净值</text>
+          <text>{{item.dwjz}}</text>
+        </view>
+        <view>
+          <text class="label">{{item.amountLabel}}</text>
+          <text>{{item.amount}}</text>
+        </view>
+        <view>
+          <text class="label">{{item.dayGainLabel}}</text>
+          <text class="{{item.dayGainClass}}">{{item.dayGain}}</text>
+        </view>
+        <view>
+          <text class="label">{{item.costGainLabel}}</text>
+          <text class="{{item.costGainClass}}">{{item.costGain}}</text>
+        </view>
+        <view>
+          <text class="label">持有收益率</text>
+          <text class="{{item.costGainClass}}">{{item.costRate}}</text>
+        </view>
+      </view>
+
+      <view class="fund-foot">
+        <text>份额 {{item.numText}}</text>
+        <text>更新 {{item.updateText}}</text>
+      </view>
+    </view>
+  </block>
 </view>
